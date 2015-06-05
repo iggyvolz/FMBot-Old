@@ -1,0 +1,3 @@
+[submodule "phpBB-Remote-API"]
+	path = phpBB-Remote-API
+	url = https://github.com/iggyvolz/phpBB-Remote-API.git
