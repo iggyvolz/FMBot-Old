@@ -82,9 +82,18 @@ class phpbbRemoteApi
     $nresult=explode("\"",explode("<a href=\"./ucp.php?i=pm&amp;mode=view&amp;f=0&amp;p=",explode("<ul class=\"topiclist cplist pmlist\">",$result)[1])[1])[0];
     return $nresult+0;
   }
-  public function delete_pm()
+  public function delete_pm($p)
   {
-
+    $ihandle=$this->curlrequest(sprintf("%s/ucp.php?i=pm&mode=compose&action=delete&f=0&p=%u",$this->url,$p));
+    $iresult=curl_exec($ihandle);
+    curl_close($ihandle);
+    $confirm_key=explode("\"",explode("<form id=\"confirm\" action=\"./ucp.php?i=pm&amp;mode=compose&amp;action=delete&amp;f=0&amp;p=$p&amp;confirm_key=",$iresult)[1])[0];
+    $confirm_uid=explode("\"",explode("<input type=\"hidden\" name=\"confirm_uid\" value=\"",$iresult)[1])[0];
+    $sess=explode("\"",explode("<input type=\"hidden\" name=\"sess\" value=\"",$iresult)[1])[0];
+    $handle=$this->curlrequest(sprintf("%s/ucp.php?i=pm&mode=compose&action=delete&f=0&p=$p&confirm_key=$confirm_key",$this->url),["confirm_uid"=>$confirm_uid,"p"=>$p,"f"=>"0","action"=>"delete","sess"=>$sess,"sid"=>$sess,"confirm"=>"Yes"]);
+    $result=curl_exec($handle);
+    curl_close($handle);
+    return $result;
   }
   public function create_post($subject,$message)
   {
