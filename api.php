@@ -63,7 +63,9 @@ class phpbbRemoteApi
   }
   public function update_num_posts()
   {
-    $result=file_get_contents(sprintf("%s/viewtopic.php?f=%u&t=%u",$this->url,$this->f,$this->t));
+    $handle=$this->curlrequest(sprintf("%s/viewtopic.php?f=%u&t=%u",$this->url,$this->f,$this->t));
+    $result=curl_exec($handle);
+    curl_close($handle);
     $nresult=explode(" posts",explode("</div>",explode("<div class=\"pagination\">",$result)[1])[0])[0];
     if(count(explode("<a",$nresult))>1)
     {
@@ -72,7 +74,15 @@ class phpbbRemoteApi
     $this->num_posts=trim($nresult);
     return $this->num_posts+0;
   }
-  public function unread_pms()
+  public function get_unread_pm()
+  {
+    $handle=$this->curlrequest(sprintf("%s/ucp.php?i=pm&folder=inbox",$this->url));
+    $result=curl_exec($handle);
+    curl_close($handle);
+    $nresult=explode("\"",explode("<a href=\"./ucp.php?i=pm&amp;mode=view&amp;f=0&amp;p=",explode("<ul class=\"topiclist cplist pmlist\">",$result)[1])[1])[0];
+    return $nresult+0;
+  }
+  public function delete_pm()
   {
 
   }
