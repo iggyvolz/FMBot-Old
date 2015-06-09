@@ -98,7 +98,8 @@ class phpBBPost
     $handle=$this->curlrequest(sprintf("%s/viewtopic.php?f=%u&t=%u&start=%u",$url,$f,$t,$s));
     $result=curl_exec($handle);
     curl_close($handle);
-    file_put_contents("result.html",$result);
+    //file_put_contents("result.html",$result);
+    $result=preg_replace("~<blockquote(.*?)>(.*)</blockquote>~si","",' '.$result.' ',1);
     $this->author=explode("<",explode("\">",explode("<strong><a href",explode("<p class=\"author\">",$result)[1])[1])[1])[0];
     $this->time=new DateTime(explode(" </p>",explode("</strong> &raquo; ",explode("<p class=\"author\">",$result)[1])[1])[0]);
     $this->conts=strip_tags(explode("</div>",explode("<div class=\"content\">",$result)[1])[0]);
