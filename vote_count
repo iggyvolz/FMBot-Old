@@ -49,7 +49,7 @@ foreach($votecount as $player=>$votes)
 {
   $count=count($votes);
   $vvotes=implode($votes,", ");
-  $votecounttext.="$player ($count): $vvotes";
+  $votecounttext.="$player ($count): $vvotes\n";
 }
 $votecounttext.="[/color][/b]";
 $oldhash=file_get_contents("vote_count_md5");
