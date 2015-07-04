@@ -107,12 +107,21 @@ class phpbbRemoteApi
     $sid=explode("\"",explode("<input type=\"hidden\" name=\"sid\" value=\"",$iresult)[1])[0];
     $forum_id=explode("\"",explode("<input type=\"hidden\" name=\"forum_id\" value=\"",$iresult)[1])[0];
     $topic_id=explode("\"",explode("<input type=\"hidden\" name=\"topic_id\" value=\"",$iresult)[1])[0];
-    $handle=$this->curlrequest(true?sprintf("%s/posting.php?mode=reply&f=%u&t=%u",$this->url,$this->f,$this->t):"http://requestb.in/uyd9gvuy",["subject"=>$subject,"addbbcode20"=>"100","message"=>$message,"topic_cur_post_id"=>$topic_cur_post_id,"lastclick"=>$lastclick,"post"=>"Submit","attach_sig"=>"on","creation_time"=>$creation_time,"form_token"=>$form_token,"sid"=>$sid,"forum_id"=>$forum_id,"topic_id"=>$topic_id]);
-    //sprintf("%s/posting.php?mode=reply&f=%u&t=%u",$this->url,$this->f,$this->t)
-    //http://requestb.in/1fmjbdx1
+    $handle=$this->curlrequest(sprintf("%s/posting.php?mode=reply&f=%u&t=%u",$this->url,$this->f,$this->t),["subject"=>$subject,"addbbcode20"=>"100","message"=>$message,"topic_cur_post_id"=>$topic_cur_post_id,"lastclick"=>$lastclick,"post"=>"Submit","attach_sig"=>"on","creation_time"=>$creation_time,"form_token"=>$form_token,"sid"=>$sid,"forum_id"=>$forum_id,"topic_id"=>$topic_id]);
     $result=curl_exec($handle);
     curl_close($handle);
     return $result;
+  }
+  public function create_pm($subject,$message)
+  {
+    $ihandle=$this->curlrequest(sprintf("%s/ucp.php?i=pm&mode=compose",$this->url));
+    $iresult=curl_exec($ihandle);
+    curl_close($ihandle);
+    $lastclick=explode("\"",explode("<input type=\"hidden\" name=\"lastclick\" value=\"",$iresult)[1])[0];
+    $status_switch=explode("\"",explode("<input type=\"hidden\" name=\"status_switch\" value=\"",$iresult)[1])[0];
+    $form_token=explode("\"",explode("<input type=\"hidden\" name=\"form_token\" value=\"",$iresult)[1])[0];
+    $creation_time=explode("\"",explode("<input type=\"hidden\" name=\"creation_time\" value=\"",$iresult)[1])[0];
+    $handle=$this->curlrequest(sprintf("%s/ucp.php?i=pm&mode=compose",$this->url),["subject"=>$subject,"message"=>$message,"lastclick"=>$lastclick,"status_switch"=>$status_switch,"form_token"=>$form_token,"creation_time"=>$creation_time])
   }
 }
 class phpBBPost
