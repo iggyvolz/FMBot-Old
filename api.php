@@ -79,7 +79,8 @@ class phpbbRemoteApi
     $handle=$this->curlrequest(sprintf("%s/ucp.php?i=pm&folder=inbox",$this->url));
     $result=curl_exec($handle);
     curl_close($handle);
-    $nresult=explode("\"",explode("<a href=\"./ucp.php?i=pm&amp;mode=view&amp;f=0&amp;p=",explode("<ul class=\"topiclist cplist pmlist\">",$result)[1])[1])[0];
+    $nresult=@explode("\"",explode("<a href=\"./ucp.php?i=pm&amp;mode=view&amp;f=0&amp;p=",explode("<ul class=\"topiclist cplist pmlist\">",$result)[1])[1])[0];
+    if(!$nresult) { return null; }
     return $nresult+0;
   }
   public function delete_pm($p)
@@ -121,7 +122,7 @@ class phpbbRemoteApi
     $status_switch=explode("\"",explode("<input type=\"hidden\" name=\"status_switch\" value=\"",$iresult)[1])[0];
     $form_token=explode("\"",explode("<input type=\"hidden\" name=\"form_token\" value=\"",$iresult)[1])[0];
     $creation_time=explode("\"",explode("<input type=\"hidden\" name=\"creation_time\" value=\"",$iresult)[1])[0];
-    $handle=$this->curlrequest(sprintf("%s/ucp.php?i=pm&mode=compose",$this->url),["subject"=>$subject,"message"=>$message,"lastclick"=>$lastclick,"status_switch"=>$status_switch,"form_token"=>$form_token,"creation_time"=>$creation_time])
+    $handle=$this->curlrequest(sprintf("%s/ucp.php?i=pm&mode=compose",$this->url),["subject"=>$subject,"message"=>$message,"lastclick"=>$lastclick,"status_switch"=>$status_switch,"form_token"=>$form_token,"creation_time"=>$creation_time]);
   }
 }
 class phpBBPost
