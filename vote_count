@@ -1,0 +1,55 @@
+#!/usr/bin/env php
+<?php
+require "api.php";
+require "settings.php";
+date_default_timezone_set("America/New_York");
+$api=new phpbbRemoteApi(PHPBB_URL,PHPBB_FORUM,PHPBB_TOPIC,PHPBB_USER,PHPBB_PASSWORD);
+echo $api->update_num_posts()."\n";
+$votes=[];
+$votecount=[];
+for($i=0;$i<75;$i++)
+{
+  list($author,$conts,$time)=[$api->get_post($i)->author,$api->get_post($i)->conts,$api->get_post($i)->time];
+  if(!isset($votes[$author]))
+  {
+    $votes[$author]=NULL;
+  }
+  foreach(unserialize(FMBOT_PLAYERS) as $player)
+  {
+    if(strpos($conts,"/vote $player")!==FALSE)
+    {
+      $votes[$author]=$player;
+    }
+  }
+  if(strpos($conts,"/nolynch")!==FALSE)
+  {
+    $votes[$author]="No Lynch";
+  }
+  if(strpos($conts,"/unvote")!==FALSE)
+  {
+    $votes[$author]=NULL;
+  }
+}
+var_dump($votes);
+foreach ($votes as $player => $vote)
+{
+  if(!$vote)
+  {
+    continue;
+  }
+  if(!isset($votecount[$vote]))
+  {
+    $votecount[$vote]=[];
+  }
+  $votecount[$vote][]=$player;
+}
+var_dump($votecount);
+$votecounttext="[b][color=#0080FF]";
+foreach($votecount as $player=>$votes)
+{
+  $count=count($votes);
+  $vvotes=implode($votes,", ");
+  $votecounttext.="$player ($count): $vvotes";
+}
+$votecounttext.="[/color][/b]";
+$api->create_post("Vote Count",$votecounttext);
