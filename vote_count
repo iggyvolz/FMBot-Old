@@ -44,7 +44,7 @@ foreach ($votes as $player => $vote)
   $votecount[$vote][]=$player;
 }
 var_dump($votecount);
-$votecounttext="[b][color=#0080FF][size=150][u]Current Vote Count[/u][/size]";
+$votecounttext="[b][color=#0080FF][size=150][u]Current Vote Count[/u][/size]\n";
 foreach($votecount as $player=>$votes)
 {
   $count=count($votes);
