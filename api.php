@@ -27,6 +27,8 @@ class phpbbRemoteApi
   }
   private function curlrequest($url,$params=NULL)
   {
+    $pparams=json_encode($params);
+    echo "CURL REQUEST TO $url WITH PARAMS $pparams\n";
     sleep(3);
     $handle=curl_init($url);
     curl_setopt($handle, CURLOPT_COOKIEFILE, phpbbRemoteApi::COOKIE_FILE);
@@ -69,7 +71,7 @@ class phpbbRemoteApi
     $nresult=explode(" posts",explode("</div>",explode("<div class=\"pagination\">",$result)[1])[0])[0];
     if(count(explode("<a",$nresult))>1)
     {
-      $nresult=explode("<a",$nresult)[1]; // Get rid of Unread Posts if any
+      $nresult=explode("&bull;",$nresult)[1]; // Get rid of Unread Posts if any
     }
     $this->num_posts=trim($nresult);
     return $this->num_posts+0;
@@ -140,13 +142,23 @@ class phpBBPost
     $result=curl_exec($handle);
     curl_close($handle);
     //file_put_contents("result.html",$result);
-    $result=preg_replace("~<blockquote(.*?)>(.*)</blockquote>~si","",' '.$result.' ',1);
+    $dom = new DOMDocument;
+    @$dom->loadHTML($result);
+    $nodes = $dom->getElementsByTagName('blockquote');
+    while($nodes->item(0))
+    {
+      $nodes->item(0)->parentNode->removeChild($nodes->item(0));
+      $nodes = $dom->getElementsByTagName('blockquote');
+    }
+    $result=$dom->saveHTML();
     $this->author=explode("<",explode("\">",explode("<strong><a href",explode("<p class=\"author\">",$result)[1])[1])[1])[0];
-    $this->time=new DateTime(explode(" </p>",explode("</strong> &raquo; ",explode("<p class=\"author\">",$result)[1])[1])[0]);
-    $this->conts=strip_tags(explode("</div>",explode("<div class=\"content\">",$result)[1])[0]);
+    $this->time=@new DateTime(explode(" </p>",explode("</strong> &raquo; ",explode("<p class=\"author\">",$result)[1])[1])[0]);
+    $this->conts=trim(strip_tags(substr(explode("<dl class=\"postprofile\"",explode("<div class=\"content\">",$result)[1])[0],0,-4)));
   }
   private function curlrequest($url,$params=NULL)
   {
+    $pparams=json_encode($params);
+    echo "CURL REQUEST TO $url WITH PARAMS $pparams\n";
     sleep(3);
     $handle=curl_init($url);
     curl_setopt($handle, CURLOPT_COOKIEFILE, phpbbRemoteApi::COOKIE_FILE);
@@ -186,6 +198,8 @@ class phpBBPM
   }
   private function curlrequest($url,$params=NULL)
   {
+    $pparams=json_encode($params);
+    echo "CURL REQUEST TO $url WITH PARAMS $pparams\n";
     sleep(3);
     $handle=curl_init($url);
     curl_setopt($handle, CURLOPT_COOKIEFILE, phpbbRemoteApi::COOKIE_FILE);
