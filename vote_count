@@ -54,3 +54,6 @@ foreach($votecount as $player=>$votes)
 $votecounttext.="[/color][/b]";
 $oldhash=file_get_contents("vote_count_md5");
 echo $votecounttext;
+if(md5($votecounttext)===$oldhash) { die("Same vote count."); }
+$api->create_post("Vote Count",$votecounttext);		
+file_put_contents("vote_count_md5",md5($votecounttext));
