@@ -19,15 +19,18 @@ for($i=DAY_START;file_exists("posts/$i");$i++)
     if(strpos($conts,"/vote $player")!==FALSE)
     {
       $votes[$author]=$player;
+     continue;
     }
   }
   if(strpos($conts,"/nolynch")!==FALSE)
   {
     $votes[$author]="No Lynch";
+    continue;
   }
   if(strpos($conts,"/unvote")!==FALSE)
   {
     $votes[$author]=NULL;
+    continue;
   }
 }
 var_dump($votes);
