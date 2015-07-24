@@ -14,13 +14,19 @@ for($i=DAY_START;file_exists("posts/$i");$i++)
   {
     $votes[$author]=NULL;
   }
+  $player_found=false;
   foreach(unserialize(FMBOT_PLAYERS) as $player)
   {
     if(strpos($conts,"/vote $player")!==FALSE)
     {
       $votes[$author]=$player;
-     continue;
+      $player_found=true;
+      break;
     }
+  }
+  if($player_found)
+  {
+    continue;
   }
   if(strpos($conts,"/nolynch")!==FALSE)
   {
