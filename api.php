@@ -20,15 +20,22 @@ class phpbbRemoteApi
   }
   public function login()
   {
-    $handle=$this->curlrequest(sprintf("%s/ucp.php?mode=login",$this->url),["username"=>$this->user,"password"=>$this->pass,"redirect"=>"./ucp.php","mode"=>"login","login"=>"Login"]);
+    $handle=$this->curlrequest(sprintf("%s/ucp.php?mode=login",$this->url),["username"=>$this->user,"password"=>$this->pass,"redirect"=>"./ucp.php","mode"=>"login","login"=>"Login"],true);
     $result=curl_exec($handle);
     curl_close($handle);
     return $result;
   }
-  private function curlrequest($url,$params=NULL)
+  private function curlrequest($url,$params=NULL,$hidelog=false)
   {
-    $pparams=json_encode($params);
-    echo "CURL REQUEST TO $url WITH PARAMS $pparams\n";
+    if($hidelog)
+    {
+      echo "CURL REQUEST TO $url WITH PARAMS [REDACTED]\n";
+    }
+    else
+    {
+      $pparams=json_encode($params);
+      echo "CURL REQUEST TO $url WITH PARAMS $pparams\n";
+    }
     sleep(3);
     $handle=curl_init($url);
     curl_setopt($handle, CURLOPT_COOKIEFILE, phpbbRemoteApi::COOKIE_FILE);
@@ -93,7 +100,7 @@ class phpbbRemoteApi
     $confirm_key=explode("\"",explode("<form id=\"confirm\" action=\"./ucp.php?i=pm&amp;mode=compose&amp;action=delete&amp;f=0&amp;p=$p&amp;confirm_key=",$iresult)[1])[0];
     $confirm_uid=explode("\"",explode("<input type=\"hidden\" name=\"confirm_uid\" value=\"",$iresult)[1])[0];
     $sess=explode("\"",explode("<input type=\"hidden\" name=\"sess\" value=\"",$iresult)[1])[0];
-    $handle=$this->curlrequest(sprintf("%s/ucp.php?i=pm&mode=compose&action=delete&f=0&p=$p&confirm_key=$confirm_key",$this->url),["confirm_uid"=>$confirm_uid,"p"=>$p,"f"=>"0","action"=>"delete","sess"=>$sess,"sid"=>$sess,"confirm"=>"Yes"]);
+    $handle=$this->curlrequest(sprintf("%s/ucp.php?i=pm&mode=compose&action=delete&f=0&p=$p&confirm_key=$confirm_key",$this->url),["confirm_uid"=>$confirm_uid,"p"=>$p,"f"=>"0","action"=>"delete","sess"=>$sess,"sid"=>$sess,"confirm"=>"Yes"],true);
     $result=curl_exec($handle);
     curl_close($handle);
     return $result;
@@ -196,10 +203,17 @@ class phpBBPM
     $this->subject=strip_tags(explode("</h3>",explode("<h3 class=\"first\">",$result)[1])[0]);
     $this->conts=strip_tags(explode("</div>",explode("<div class=\"content\">",$result)[1])[0]);
   }
-  private function curlrequest($url,$params=NULL)
+  private function curlrequest($url,$params=NULL,$hidelog=false)
   {
-    $pparams=json_encode($params);
-    echo "CURL REQUEST TO $url WITH PARAMS $pparams\n";
+    if($hidelog)
+    {
+      echo "CURL REQUEST TO $url WITH PARAMS [REDACTED]\n";
+    }
+    else
+    {
+      $pparams=json_encode($params);
+      echo "CURL REQUEST TO $url WITH PARAMS $pparams\n";
+    }
     sleep(3);
     $handle=curl_init($url);
     curl_setopt($handle, CURLOPT_COOKIEFILE, phpbbRemoteApi::COOKIE_FILE);
