@@ -20,15 +20,22 @@ class phpbbRemoteApi
   }
   public function login()
   {
-    $handle=$this->curlrequest(sprintf("%s/ucp.php?mode=login",$this->url),["username"=>$this->user,"password"=>$this->pass,"redirect"=>"./ucp.php","mode"=>"login","login"=>"Login"]);
+    $handle=$this->curlrequest(sprintf("%s/ucp.php?mode=login",$this->url),["username"=>$this->user,"password"=>$this->pass,"redirect"=>"./ucp.php","mode"=>"login","login"=>"Login"],true);
     $result=curl_exec($handle);
     curl_close($handle);
     return $result;
   }
-  private function curlrequest($url,$params=NULL)
+  private function curlrequest($url,$params=NULL,$hidelog=false)
   {
-    $pparams=json_encode($params);
-    echo "CURL REQUEST TO $url WITH PARAMS $pparams\n";
+    if($hidelog)
+    {
+      echo "CURL REQUEST TO $url WITH PARAMS [REDACTED]\n";
+    }
+    else
+    {
+      $pparams=json_encode($params);
+      echo "CURL REQUEST TO $url WITH PARAMS $pparams\n";
+    }
     sleep(3);
     $handle=curl_init($url);
     curl_setopt($handle, CURLOPT_COOKIEFILE, phpbbRemoteApi::COOKIE_FILE);
@@ -196,10 +203,17 @@ class phpBBPM
     $this->subject=strip_tags(explode("</h3>",explode("<h3 class=\"first\">",$result)[1])[0]);
     $this->conts=strip_tags(explode("</div>",explode("<div class=\"content\">",$result)[1])[0]);
   }
-  private function curlrequest($url,$params=NULL)
+  private function curlrequest($url,$params=NULL,$hidelog=false)
   {
-    $pparams=json_encode($params);
-    echo "CURL REQUEST TO $url WITH PARAMS $pparams\n";
+    if($hidelog)
+    {
+      echo "CURL REQUEST TO $url WITH PARAMS [REDACTED]\n";
+    }
+    else
+    {
+      $pparams=json_encode($params);
+      echo "CURL REQUEST TO $url WITH PARAMS $pparams\n";
+    }
     sleep(3);
     $handle=curl_init($url);
     curl_setopt($handle, CURLOPT_COOKIEFILE, phpbbRemoteApi::COOKIE_FILE);
