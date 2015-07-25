@@ -11,7 +11,7 @@ $games=[];
 $episode7=new Game();
 $episode7->name="Episode 7";
 $episode7->slug="episode7";
-$episode7->modules=["Download Posts"=>get_status("(FMBot) Download Posts"),"Vote Count"=>get_status("(FMBot) Download Posts")];
+$episode7->modules=["Download Posts"=>get_status("(FMBot) Download Posts"),"Vote Count"=>get_status("(FMBot) Vote Count")];
 $games[]=$episode7;
 return $games;
 function get_status($job)
