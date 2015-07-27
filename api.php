@@ -220,6 +220,7 @@ class phpBBPM
   public $time;
   public $subject;
   public $conts;
+  public $author;
   public function __construct($url,$p)
   {
     $this->p=$p;
@@ -228,6 +229,7 @@ class phpBBPM
     curl_close($handle);
     //file_put_contents("result.html",$result);
     $result=preg_replace("~<blockquote(.*?)>(.*)</blockquote>~si","",' '.$result.' ',1);
+    $this->author=trim(strip_tags(explode("</a>",explode("To:</strong>",explode("<p class=\"author\">",$result)[1])[1])[0]));
     $this->time=new DateTime(trim(explode("<br />",explode("</strong>",explode("<p class=\"author\">",$result)[1])[1])[0]));
     $this->subject=strip_tags(explode("</h3>",explode("<h3 class=\"first\">",$result)[1])[0]);
     $this->conts=strip_tags(explode("</div>",explode("<div class=\"content\">",$result)[1])[0]);
