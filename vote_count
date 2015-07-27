@@ -14,20 +14,29 @@ for($i=DAY_START;file_exists("posts/$i");$i++)
   {
     $votes[$author]=NULL;
   }
+  $player_found=false;
   foreach(unserialize(FMBOT_PLAYERS) as $player)
   {
     if(strpos($conts,"/vote $player")!==FALSE)
     {
       $votes[$author]=$player;
+      $player_found=true;
+      break;
     }
+  }
+  if($player_found)
+  {
+    continue;
   }
   if(strpos($conts,"/nolynch")!==FALSE)
   {
     $votes[$author]="No Lynch";
+    continue;
   }
   if(strpos($conts,"/unvote")!==FALSE)
   {
     $votes[$author]=NULL;
+    continue;
   }
 }
 var_dump($votes);
@@ -51,7 +60,7 @@ foreach($votecount as $player=>$votes)
   $vvotes=implode($votes,", ");
   $votecounttext.="$player ($count): $vvotes\n";
 }
-$votecounttext.="[/color][/b]";
+$votecounttext.="\n\n[i]".FMBOT_NUM_LIVE_PLAYERS." players alive, ".ceil((FMBOT_NUM_LIVE_PLAYERS+1)/2)." votes needed for majority.[/i][/color][/b]";
 $oldhash=file_get_contents("vote_count_md5");
 echo $votecounttext;
 if(md5($votecounttext)===$oldhash) { die("Same vote count."); }
