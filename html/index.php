@@ -1,7 +1,8 @@
 <?php
 namespace FMBot;
-require_once __DIR__ . "/../vendor/autoload.php";
+require_once dirname(__DIR__) . "/vendor/autoload.php";
 use htmlElement\htmlElement;
+require dirname(__DIR__) . "settings.php";
 $games=require "games.php";
 $html=new htmlElement("html");
 while($html->toggle())
@@ -14,7 +15,14 @@ while($html->toggle())
     {
       echo "FMBot Status Panel";
     }
-    $jquery=new htmlElement("script",["src"=>"//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"]);
+    switch(FMBOT_JQUERY_PROVIDER):
+      case "google":
+        $jquery=new htmlElement("script",["src"=>"//ajax.googleapis.com/ajax/libs/jquery/"..FMBOT_JQUERY_VERSION.."/jquery.min.js"]);
+        break;
+      default:
+        $jquery=new htmlElement("script",["src"=>FMBOT_JQUERY_URL]);
+        break;
+    endswitch;
     while($jquery->toggle()){}
     $script=new htmlElement("script");
     while($script->toggle())
