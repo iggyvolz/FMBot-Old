@@ -1,7 +1,0 @@
-#!/usr/bin/env php
-<?php
-require "api.php";
-require "settings.php";
-date_default_timezone_set("America/New_York");
-$api=new phpbbRemoteApi(PHPBB_URL,PHPBB_FORUM,PHPBB_TOPIC,PHPBB_USER,PHPBB_PASSWORD);
-echo $api->create_pm("SUBJECT","MESSAGE",["iggyvolz"]);

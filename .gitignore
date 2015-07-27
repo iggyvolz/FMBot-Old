@@ -5,3 +5,4 @@ pms
 vote_count_md5
 /vendor/
 composer.lock
+whispers_data

@@ -8,3 +8,5 @@ define("FMBOT_PLAYERS",serialize(["a","b","c"]));
 define("FMBOT_NUM_LIVE_PLAYERS",0);
 define("FMBOT_JENKINS_URL","http://127.0.0.1:8080");
 define("FMBOT_LOCAL",true);
+define("FMBOT_WHISPERS_PER_PLAYER",5);
+define("FMBOT_WHISPER_LENGTH",200);
