@@ -61,6 +61,7 @@ class phpbbRemoteApi
   public function download_pm($p)
   {
     file_put_contents("pms/$p",serialize(new phpBBPM($this->url,$p)));
+    file_put_contents("pms/unhandled",file_get_contents("pms/unhandled")."\n$p");
   }
   public function get_post($s)
   {
