@@ -3,3 +3,5 @@ cookies.txt
 settings.php
 pms
 vote_count_md5
+/vendor/
+composer.lock
