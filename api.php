@@ -27,7 +27,7 @@ class phpbbRemoteApi
   }
   private function curlrequest($url,$params=NULL,$hidelog=false)
   {
-    if($hidelog)
+    if($hidelog&&!FMBOT_LOCAL)
     {
       echo "CURL REQUEST TO $url WITH PARAMS [REDACTED]\n";
     }
@@ -233,7 +233,7 @@ class phpBBPM
   }
   private function curlrequest($url,$params=NULL,$hidelog=false)
   {
-    if($hidelog)
+    if($hidelog&&!FMBOT_LOCAL)
     {
       echo "CURL REQUEST TO $url WITH PARAMS [REDACTED]\n";
     }
