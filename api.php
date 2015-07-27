@@ -60,7 +60,7 @@ class phpbbRemoteApi
   }
   public function download_pm($p)
   {
-    file_put_contents("pms/$p",serialize(new phpBBPM($this->url,$p)));
+    file_put_contents("pms/new/$p",serialize(new phpBBPM($this->url,$p)));
   }
   public function get_post($s)
   {
@@ -68,7 +68,11 @@ class phpbbRemoteApi
   }
   public function get_pm($p)
   {
-    return unserialize(file_get_contents("pms/$p"));
+    if(file_exists("pms/$p"))
+    {
+      return unserialize(file_get_contents("pms/new/$p"));
+    }
+    return unserialize(file_get_contents("pms/new/$p"));
   }
   public function update_num_posts()
   {
