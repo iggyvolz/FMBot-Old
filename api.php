@@ -27,7 +27,7 @@ class phpbbRemoteApi
   }
   private function curlrequest($url,$params=NULL,$hidelog=false)
   {
-    if($hidelog)
+    if($hidelog&&!FMBOT_LOCAL)
     {
       echo "CURL REQUEST TO $url WITH PARAMS [REDACTED]\n";
     }
@@ -61,6 +61,7 @@ class phpbbRemoteApi
   public function download_pm($p)
   {
     file_put_contents("pms/$p",serialize(new phpBBPM($this->url,$p)));
+    file_put_contents("pms/unhandled",file_get_contents("pms/unhandled")."\n$p");
   }
   public function get_post($s)
   {
@@ -122,7 +123,7 @@ class phpbbRemoteApi
     curl_close($handle);
     return $result;
   }
-  public function create_pm($subject,$message)
+  public function create_pm($subject,$message,$to,$bcc=NULL)
   {
     $ihandle=$this->curlrequest(sprintf("%s/ucp.php?i=pm&mode=compose",$this->url));
     $iresult=curl_exec($ihandle);
@@ -131,7 +132,35 @@ class phpbbRemoteApi
     $status_switch=explode("\"",explode("<input type=\"hidden\" name=\"status_switch\" value=\"",$iresult)[1])[0];
     $form_token=explode("\"",explode("<input type=\"hidden\" name=\"form_token\" value=\"",$iresult)[1])[0];
     $creation_time=explode("\"",explode("<input type=\"hidden\" name=\"creation_time\" value=\"",$iresult)[1])[0];
-    $handle=$this->curlrequest(sprintf("%s/ucp.php?i=pm&mode=compose",$this->url),["subject"=>$subject,"message"=>$message,"lastclick"=>$lastclick,"status_switch"=>$status_switch,"form_token"=>$form_token,"creation_time"=>$creation_time]);
+    $data=["subject"=>$subject,"message"=>$message,"lastclick"=>$lastclick,"status_switch"=>$status_switch,"form_token"=>$form_token,"creation_time"=>$creation_time,"post"=>"submit"];
+    if($to)
+    {
+      foreach($to as $r)
+      {
+        $rid=$this->get_id_from_user($r);
+        $data["address_list[u][$rid]"]="to";
+      }
+    }
+    if($bcc)
+    {
+      foreach($bcc as $r)
+      {
+        $rid=$this->get_id_from_user($r);
+        $data["address_list[u][$rid]"]="bcc";
+      }
+    }
+    $handle=$this->curlrequest(sprintf("%s/ucp.php?i=pm&mode=compose",$this->url),$data,true);
+    $result=curl_exec($handle);
+    curl_close($handle);
+    return $result;
+  }
+  public function get_id_from_user($u)
+  {
+    $ihandle=$this->curlrequest(sprintf("%s/memberlist.php?mode=searchuser",$this->url),["username"=>$u]);
+    $iresult=curl_exec($ihandle);
+    curl_close($ihandle);
+    $id=explode("\"",explode("<a href=\"./memberlist.php?mode=viewprofile&amp;u=",$iresult)[1])[0]+0;
+    return $id;
   }
 }
 class phpBBPost
@@ -191,6 +220,7 @@ class phpBBPM
   public $time;
   public $subject;
   public $conts;
+  public $author;
   public function __construct($url,$p)
   {
     $this->p=$p;
@@ -199,13 +229,14 @@ class phpBBPM
     curl_close($handle);
     //file_put_contents("result.html",$result);
     $result=preg_replace("~<blockquote(.*?)>(.*)</blockquote>~si","",' '.$result.' ',1);
+    $this->author=trim(strip_tags(explode("</a>",explode("To:</strong>",explode("<p class=\"author\">",$result)[1])[1])[0]));
     $this->time=new DateTime(trim(explode("<br />",explode("</strong>",explode("<p class=\"author\">",$result)[1])[1])[0]));
     $this->subject=strip_tags(explode("</h3>",explode("<h3 class=\"first\">",$result)[1])[0]);
     $this->conts=strip_tags(explode("</div>",explode("<div class=\"content\">",$result)[1])[0]);
   }
   private function curlrequest($url,$params=NULL,$hidelog=false)
   {
-    if($hidelog)
+    if($hidelog&&!FMBOT_LOCAL)
     {
       echo "CURL REQUEST TO $url WITH PARAMS [REDACTED]\n";
     }
