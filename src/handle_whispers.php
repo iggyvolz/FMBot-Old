@@ -49,7 +49,7 @@ trait handle_whispers
         }
         if($this->settings->confirm_multiple_whispers)
         {
-          FMBot::$api->pm_reply($i,"This will cost you $nw whispers, and you have {$whispersleft[$pm->author]} whispers left.  If you wish to do this, please reply to this PM with the exact text: [code]CONFIRM SEND PM $i[/code].");
+          FMBot::$api->pm_reply($i,"This will cost you $nw whispers, and you have {$whispersleft[$pm->author]} whispers left.  If you wish to do this, please reply to this PM with the exact text: [code]CONFIRM SEND PM $i"."[/code].");
           $this->pendingwhispers[$i]=[$pm->subject,$target,$conts,$nw];
           continue;
         }
@@ -60,7 +60,7 @@ trait handle_whispers
   public function do_send_whisper($sender,$target,$conts,$nw)
   {
     $nwword=[null,""," twice"," thrice"," four times"," five times"][$nw];
-    FMBot::$api->create_pm("[{$this->settings->slug}] Whisper from $sender","[quote=$sender]$conts[/quote]",[$target]);
+    FMBot::$api->create_pm("[{$this->settings->slug}] Whisper from $sender","[quote=$sender]$conts"."[/quote]",[$target]);
     FMBot::$api->create_post($this->settings->forum,$this->settings->thread,"Whispers","[b][color={$this->settings->color}]$sender is whispering to $target$nwword![/b]");
     $this->whispersleft[$player]-=$nw;
   }
