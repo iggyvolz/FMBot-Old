@@ -10,3 +10,4 @@ define("FMBOT_JENKINS_URL","http://127.0.0.1:8080");
 define("FMBOT_LOCAL",true);
 define("FMBOT_WHISPERS_PER_PLAYER",5);
 define("FMBOT_WHISPER_LENGTH",200);
+date_default_timezone_set("America/New_York");

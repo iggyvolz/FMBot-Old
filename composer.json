@@ -9,6 +9,7 @@
         }
     ],
     "require": {
-        "iggyvolz/html-element": "^1.0"
+        "iggyvolz/html-element": "^1.0",
+        "iggyvolz/phpbb-remote-api": "dev-master"
     }
 }
